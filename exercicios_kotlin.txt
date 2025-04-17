@@ -1,0 +1,127 @@
+
+Lista de Exercícios com Classe, Função e Métodos em Kotlin
+
+====================================
+Exercício 01
+Criar uma função de extensão da classe String com o seguinte nome “firstName(): String” que irá retornar uma String com o primeiro nome de uma pessoa.
+====================================
+fun String.firstName(): String {
+    return this.trim().split(" ").firstOrNull() ?: ""
+}
+
+fun main() {
+    print("Digite o nome completo: ")
+    val nomeCompleto = readLine().orEmpty()
+    println("Primeiro nome: ${nomeCompleto.firstName()}")
+}
+
+====================================
+Exercício 02
+Criar uma função de extensão da classe String com o seguinte nome “lastName(): String” que irá retornar uma String com o último nome de uma pessoa.
+====================================
+fun String.lastName(): String {
+    val parts = this.trim().split(" ")
+    return if (parts.size > 1) parts.last() else ""
+}
+
+fun main() {
+    print("Digite o nome completo: ")
+    val nomeCompleto = readLine().orEmpty()
+    println("Último nome: ${nomeCompleto.lastName()}")
+}
+
+====================================
+Exercício 03
+Crie uma classe Temperatura, com base em uma temperatura em graus Celsius, a converta e exiba em Kelvin (K) e Fahrenheit (F), seguindo as fórmulas:
+F = C * 9/5 + 32
+K = C + 273.15
+====================================
+class Temperatura(private val celsius: Double) {
+
+    fun emFahrenheit(): Double {
+        return celsius * 9 / 5 + 32
+    }
+
+    fun emKelvin(): Double {
+        return celsius + 273.15
+    }
+
+    fun exibirConversoes() {
+        println("Temperatura em Celsius: $celsius °C")
+        println("Convertida para Fahrenheit: ${"%.2f".format(emFahrenheit())} °F")
+        println("Convertida para Kelvin: ${"%.2f".format(emKelvin())} K")
+    }
+}
+
+fun main() {
+    print("Digite a temperatura em Celsius: ")
+    val input = readLine()
+    val celsius = input?.toDoubleOrNull()
+
+    if (celsius != null) {
+        val temp = Temperatura(celsius)
+        temp.exibirConversoes()
+    } else {
+        println("Entrada inválida. Por favor, digite um número.")
+    }
+}
+
+====================================
+Exercício 04
+Tem-se um conjunto de dados contendo a altura e o sexo (masculino, feminino) de 10 pessoas. Criar uma classe para calcular e escrever:
+a) a maior e a menor altura do grupo;
+b) média de altura dos homens;
+c) o número de mulheres.
+====================================
+data class Pessoa(val altura: Double, val sexo: String)
+
+class Grupo(val pessoas: List<Pessoa>) {
+
+    fun maiorEMenorAltura(): Pair<Double, Double> {
+    if (pessoas.isEmpty()) return Pair(0.0, 0.0)
+    val alturas = pessoas.map { it.altura }
+        return Pair(alturas.maxOrNull()!!, alturas.minOrNull()!!)
+    }
+
+
+    fun mediaAlturaHomens(): Double {
+        val homens = pessoas.filter { it.sexo.lowercase() == "masculino" }
+        return if (homens.isNotEmpty()) {
+            homens.map { it.altura }.average()
+        } else 0.0
+    }
+
+    fun numeroMulheres(): Int {
+        return pessoas.count { it.sexo.lowercase() == "feminino" }
+    }
+}
+
+fun main() {
+    val pessoas = mutableListOf<Pessoa>()
+
+    println("Digite os dados de 10 pessoas:")
+
+    for (i in 1..10) {
+        print("Pessoa $i - Altura (ex: 1.75): ")
+        val altura = readLine()?.toDoubleOrNull()
+
+        print("Pessoa $i - Sexo (masculino/feminino): ")
+        val sexo = readLine().orEmpty().lowercase()
+
+        if (altura != null && (sexo == "masculino" || sexo == "feminino")) {
+            pessoas.add(Pessoa(altura, sexo))
+        } else {
+            println("Dados inválidos. Tente novamente.")
+            return
+        }
+    }
+
+    val grupo = Grupo(pessoas)
+    val (maior, menor) = grupo.maiorEMenorAltura()
+
+    println("\nResultados:")
+    println("Maior altura do grupo: $maior")
+    println("Menor altura do grupo: $menor")
+    println("Média de altura dos homens: ${"%.2f".format(grupo.mediaAlturaHomens())}")
+    println("Número de mulheres: ${grupo.numeroMulheres()}")
+}
